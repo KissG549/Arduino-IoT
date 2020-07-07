@@ -21,9 +21,42 @@ void init_Serial()
 
 void init_TM1637_display()
 {
+  Serial.println("Test TM1637 7 segment display");
   display.begin();            // initializes the display
   display.setBacklight(DISPLAY_BRIGHTNESS);
   display.print("INIT");
+
+  uint8_t tm1637_test_command[4];
+
+  tm1637_test_command[0] = B00000000;
+  tm1637_test_command[1] = B00000000;
+  tm1637_test_command[2] = B00000000;
+  tm1637_test_command[3] = B00000000;
+
+  for( uint8_t rounds = 0; rounds < 7; ++rounds )
+  {
+     Serial.println(rounds);
+     
+     tm1637_test_command[0] |= B00000001 << rounds;
+     tm1637_test_command[1] |= B00000001 << rounds;
+     tm1637_test_command[2] |= B00000001 << rounds;
+     tm1637_test_command[3] |= B00000001 << rounds;
+       
+    display.printRaw(tm1637_test_command);
+    
+    delay(100);
+  }
+
+  // colon
+  tm1637_test_command[0] = B00000000;
+  tm1637_test_command[1] = B10000000;
+  tm1637_test_command[2] = B00000000;
+  tm1637_test_command[3] = B00000000;
+  
+  display.printRaw(tm1637_test_command);
+  delay(100);
+  Serial.println("Test TM1637 7 segment display finished");
+  display.clear();
 }
 
 void init_DHT11M_sensor()
