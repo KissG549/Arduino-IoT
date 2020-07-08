@@ -27,13 +27,12 @@ void loop() {
   delay(1000);
   display.clear();
 
-  uint8_t  my_command[5];
+  uint8_t  my_command[4];
 
   my_command[0] = B00000000;
   my_command[1] = B00000000;
   my_command[2] = B00000000;
   my_command[3] = B00000000;
-  my_command[4] = B00000000;
 
   for( uint8_t rounds = 0; rounds < 7; ++rounds )
   {
@@ -43,7 +42,6 @@ void loop() {
      my_command[1] |= B00000001 << rounds;
      my_command[2] |= B00000001 << rounds;
      my_command[3] |= B00000001 << rounds;
-     my_command[4] |= B00000001 << rounds;
        
     display.printRaw(my_command);
     
