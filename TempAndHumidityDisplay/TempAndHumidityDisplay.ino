@@ -10,6 +10,7 @@ const uint8_t DHT11_PIN = 5;
 #define DHT_TYPE DHT11
 
 const uint8_t DISPLAY_BRIGHTNESS = 30;
+uint16_t dht11_error_counter = 0;
 
 SevenSegmentExtended    display(TM1637_CLK_PIN, TM1637_DATA_PIN);
 DHT                   dht(DHT11_PIN, DHT_TYPE);
@@ -86,6 +87,9 @@ void loop() {
   // Check if any reads failed and exit early (to try again).
   if (isnan(humidity) || isnan(temperature)) {
     Serial.println(F("Failed to read from DHT sensor!"));
+    ++dht11_error_counter;
+    Serial.print(F("Error counter: "));
+    Serial.println(dht11_error_counter);
   }
   else
   {
