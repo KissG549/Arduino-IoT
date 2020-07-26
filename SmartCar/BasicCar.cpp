@@ -1,32 +1,89 @@
 #include "BasicCar.h"
 
+void BasicCar::move()
+{
+	double distance = mDistanceSensor->measureDistanceCm();
+	
+	while (true)
+	{
+		Serial.print("1 Distance: ");
+		Serial.println( distance );
+		
+		if (distance > MIN_REQUIRED_DIST_FOR_TURN)
+		{
+			moveForward();
+		}
+		else
+		{
+			lookForDirection();
+		}
+
+		delay(100);
+		distance = mDistanceSensor->measureDistanceCm();
+	}
+}
+
 void BasicCar::moveForward()
 {
 	motorsControl(FORWARD);
+	Serial.println("Move forward");
 }
 
 void BasicCar::moveBackward()
 {
 	motorsControl(BACKWARD);
+	Serial.println("Move backward");
 }
 
 void BasicCar::turnLeft()
 {
 	motorsControl(BACKWARD, FORWARD, BACKWARD, FORWARD);
+	Serial.println("Turn left");
 }
 
 void BasicCar::turnRight()
 {
 	motorsControl(FORWARD, BACKWARD, FORWARD, BACKWARD);
+	Serial.println("Turn right");
 }
 
 void BasicCar::stop()
 {
 	motorsControl(BRAKE);
+	Serial.println("Stop");
 }
 
-void BasicCar::avoidObstackle(UltraSonicDistanceSensor& pDistanceSensor)
+void BasicCar::setDistanceSensor(UltraSonicDistanceSensor& pDistanceSensor)
 {
+	mDistanceSensor = &pDistanceSensor;
+}
+
+void BasicCar::lookForDirection()
+{
+	double distance = 9.0;
+	uint8_t maxTry = 20;
+	uint8_t tryCounter = 0;
+
+	while (distance < MIN_REQUIRED_DIST_FOR_TURN)
+	{
+		turnRight();
+		delay(50);
+		distance = mDistanceSensor->measureDistanceCm();
+		Serial.print("2 Distance: ");
+		Serial.println(distance);
+
+		if (++tryCounter >= maxTry)
+		{
+			break;
+		}
+	}
+	
+	if (tryCounter >= maxTry) 
+	{
+		turnRight();
+		delay(50);
+		stop();
+	}
 
 }
 
