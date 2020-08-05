@@ -64,6 +64,8 @@ void BasicCar::lookForDirection()
 	uint8_t maxTry = 20;
 	uint8_t tryCounter = 0;
 
+	stop();
+
 	while (distance < MIN_REQUIRED_DIST_FOR_TURN)
 	{
 		turnRight();
