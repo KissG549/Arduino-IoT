@@ -22,7 +22,7 @@ public:
 		if (mPrev) { mPrev = NULL; }
 		if (myVal) { delete myVal; }
 	};
-
+	
 	mListNode* mNext;
 	mListNode* mPrev;
 	T* myVal;
@@ -60,9 +60,27 @@ public:
 		return *(mTail->myVal);
 	};
 
+	bool isEnd() const
+	{
+		return mCurrent == mTail;
+	}
+
+	T& next()
+	{
+		if (mCurrent == NULL)
+		{
+			mCurrent = mHead;
+		}
+		else
+		{
+			mCurrent = mCurrent->mNext;
+		}
+		return *(mCurrent->myVal);
+	};
+
 	bool empty() const
 	{
-		return mSize > 0;
+		return mSize <= 0;
 	};
 
 	uint8_t size() const
@@ -119,6 +137,7 @@ public:
 	//	// TODO
 	//}
 
+
 private:
 	mListNode<T>* mHead;
 	mListNode<T>* mTail;
@@ -129,7 +148,7 @@ private:
 	// insert before
 	void _insert(T pValue, mListNode<T>* pPos)
 	{
-		mListNode<T>* newNode = new mListNode<T>(&pValue);
+		mListNode<T>* newNode = new mListNode<T>(pValue);
 		++mSize;
 
 		// if the list is empty
@@ -162,29 +181,53 @@ private:
 	void _remove(mListNode<T>* pPos)
 	{
 		if (pPos == NULL) { return; }
-
+		
+		// remove from the Head
 		if (pPos == mHead)
 		{
-			mHead = pPos->mNext;
-			pPos->mPrev = NULL;
+			_removeHead();
 		}
+		// remove from the end
 		else if (pPos == mTail)
 		{
-			mTail = pPos->mPrev;
+			_removeTail();
 		}
-
-		if (pPos->mNext)
+		else
 		{
 			pPos->mNext->mPrev = pPos->mPrev;
-		}
-		if (pPos->mPrev)
-		{
 			pPos->mPrev->mNext = pPos->mNext;
 		}
 		delete pPos;
 		--mSize;
 	};
 
+	void _removeHead()
+	{
+		if (mHead->mNext)
+		{
+			mHead = mHead->mNext;
+			mHead->mPrev = NULL;
+		}
+		else
+		{
+			mHead = NULL;
+			mTail = NULL;
+		}
+	}
+
+	void _removeTail()
+	{
+		if (mTail->mPrev)
+		{
+			mTail = mTail->mPrev;
+			mTail->mNext = NULL;
+		}
+		else
+		{
+			mTail = NULL;
+			mTail = NULL;
+		}
+	}
 };
 
 
