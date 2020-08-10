@@ -51,7 +51,7 @@ private:
      * 
      *    are these items in descending order?  => getting closer to something
      *  
-     *    are these items in ascending order? => getting away from something
+     *    are these items in ascending order?   => getting away from something
      *  
      *  
 		*/
