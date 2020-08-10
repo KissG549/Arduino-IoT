@@ -2,9 +2,10 @@
 #define _BasicCar_h_
 
 #include <AFMotor.h>
-#include <HCSR04.h>
 #include <inttypes.h>
 #include "Arduino.h"
+#include "BHCSR04.h"
+#include "DiMNGR.h"
 
 const double MIN_REQUIRED_DIST_FOR_TURN = 10.0;
 
@@ -35,7 +36,8 @@ public:
 		mMotorFrontRight.setSpeed(240);
 		mMotorRearLeft.setSpeed(240);
 		mMotorRearRight.setSpeed(240);
-		mDistanceSensor = nullptr;
+		mDistanceMNGR = nullptr;
+    mMotorsRunning = false;
 	};
 
 	~BasicCar() {};
@@ -47,9 +49,9 @@ public:
 	void turnRight();
 	void stop();
 
-	void setDistanceSensor(UltraSonicDistanceSensor& pDistanceSensor);
+	void setDistanceMNGR(DistanceManager& pDistanceMNGR);
 
-	void lookForDirection();
+	void lookForDirection(double distance);
 
 private:
 	AF_DCMotor mMotorFrontLeft;
@@ -57,9 +59,11 @@ private:
 	AF_DCMotor mMotorRearLeft;
 	AF_DCMotor mMotorRearRight;
 
-	UltraSonicDistanceSensor *mDistanceSensor;
+	DistanceManager *mDistanceMNGR;
+  bool mMotorsRunning;
 
 	void motorsControl(const uint8_t pFrlCmd, uint8_t pFrrCmd = 0, uint8_t pRelCmd = 0, uint8_t pRerCmd = 0);
+  void setMotorSpeed(uint8_t speed);
 };
 
 #endif
