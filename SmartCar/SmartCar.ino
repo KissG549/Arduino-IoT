@@ -1,9 +1,11 @@
 #include <HCSR04.h>
 #include "BasicCar.h"
+#include "DiMNGR.h"
 
 BasicCar myCar(4,3,1,2);
 
-UltraSonicDistanceSensor distanceSensor(2, 3); // Trigger pin, echo pin
+//UltraSonicDistanceSensor distanceSensor(10, 9); // Trigger pin, echo pin
+DistanceManager distanceMNGR(10,9);
 
 void setup() 
 {
@@ -12,10 +14,6 @@ void setup()
 
 void loop() 
 {
-  double distance = distanceSensor.measureDistanceCm();
-  myCar.setDistanceSensor(distanceSensor);
-  Serial.print("0 Distance: ");
-  Serial.println( distance );
+  myCar.setDistanceMNGR(distanceMNGR);
   myCar.move();
-  delay(100);
 }
