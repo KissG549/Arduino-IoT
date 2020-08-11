@@ -1,0 +1,11 @@
+
+*.tlog
+*.pdb
+*.idb
+*.log
+*.obj
+*.enc
+*.ipch
+*.db
+SmartCar/SmartCarWin/.vs/SmartCarWin/v16/.suo
+*.ilk
