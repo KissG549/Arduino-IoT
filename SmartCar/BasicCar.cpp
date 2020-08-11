@@ -11,7 +11,10 @@ void BasicCar::move()
     if( canWeMove(distance) )
     {
       // we can move forward
-      adaptBySpeed(distance);
+      adaptSpeedByDistance(distance);
+      
+      double tolerance = 1.0; // cm
+      uint8_t isMoving = mDistanceMNGR->isMoving( tolerance );
 
       if( mMotorsRunning )
       {
@@ -34,108 +37,12 @@ void BasicCar::move()
     }
     else // we can't move
     {
+      stop();
       obstackleAvoidance(distance);  
     }
     
   }
-  // measure distance
 
-  // 
-  
-  
-  return;
-
-  
-	double distance = mDistanceMNGR->measureDistanceCm();
-
-  double tolerance = 1.0; // cm
-
-  uint8_t maxDirectionTry = 10;
-  
-	while (true)
-	{
-		Serial.print("1 Distance: ");
-		Serial.println( distance );
-
-    uint8_t isMoving =  mDistanceMNGR->isMoving( tolerance );
-
-    uint8_t maxDirectionTry = 10;
-
-    Serial.print("Speed: ");
-    Serial.println( isMoving );
-
-
-    if( !isMoving && !mMotorsRunning )
-    {
-        /* 
-             can we move? is there enough space to move forward?
-              move
-    
-              else // we can not move forward
-                look for direction
-                  is the lookup reached it's limit?
-                    go backward for a short time
-                    and stop
-                    look for direction
-        */
-
-        if( distance >= 10.0 )
-        {
-            moveForward();
-        }
-        else
-        {
-            delay(200);
-            lookForDirection(distance);
-        }
-    }
-    else if( !isMoving && mMotorsRunning )
-    {
-      stop();  
-    }
-    else if( isMoving && mMotorsRunning )
-    {
-        if ( distance > 50.0 )
-        {
-          setMotorSpeed(255);
-        }
-        else if ( distance <= 50.0 && distance > 30.0 )
-        {
-          // slowing down
-          setMotorSpeed(150);
-        }
-        else if ( distance <= 30.0 && distance > 10.0 )
-        {
-          // slowing down  
-          setMotorSpeed(180);
-        } 
-        else if ( distance < 10.0)
-        {
-          setMotorSpeed(130);
-        }
-        else
-        {
-          setMotorSpeed(200);
-        }
-    }
-    else if( isMoving && !mMotorsRunning )
-    {
-       stop();  
-    }
-    else
-    {
-      Serial.println("Unexpected state");
-      stop();
-     }
-
-
-    Serial.println("After if");
-
-		delay(1000);
-    Serial.println("Before next ");
-		distance = mDistanceMNGR->measureDistanceCm();
-    Serial.println("After next ");
-	}
 }
 
 void BasicCar::moveForward()
@@ -233,4 +140,9 @@ void BasicCar::setMotorSpeed(uint8_t speed)
     mMotorFrontRight.setSpeed(speed);
     mMotorRearLeft.setSpeed(speed);
     mMotorRearRight.setSpeed(speed);
+}
+
+
+void BasicCar::adaptSpeedByDistance(double distance)
+{  
 }

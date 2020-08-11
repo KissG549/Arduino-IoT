@@ -62,8 +62,12 @@ private:
 	DistanceManager *mDistanceMNGR;
   bool mMotorsRunning;
 
+  static const uint8_t close, middle, far;
+
 	void motorsControl(const uint8_t pFrlCmd, uint8_t pFrrCmd = 0, uint8_t pRelCmd = 0, uint8_t pRerCmd = 0);
   void setMotorSpeed(uint8_t speed);
+  void adaptSpeedByDistance(double distance);
+  
 };
 
 #endif
