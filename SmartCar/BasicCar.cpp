@@ -3,6 +3,49 @@
 
 void BasicCar::move()
 {
+  while( true )
+  {
+    double distance = mDistanceMNGR->measureDistanceCm();
+
+    // can we move?
+    if( canWeMove(distance) )
+    {
+      // we can move forward
+      adaptBySpeed(distance);
+
+      if( mMotorsRunning )
+      {
+        if( !isMoving )
+        {
+          // if motors are running, but the car has stopped
+          stop();
+          moveBackward();
+          delay(100);
+          obstackleAvoidance(distance);  
+        }
+        // if motors running and the car is moving, it's ok
+          
+      }
+      else
+      {
+          moveForward();
+      }
+      
+    }
+    else // we can't move
+    {
+      obstackleAvoidance(distance);  
+    }
+    
+  }
+  // measure distance
+
+  // 
+  
+  
+  return;
+
+  
 	double distance = mDistanceMNGR->measureDistanceCm();
 
   double tolerance = 1.0; // cm
