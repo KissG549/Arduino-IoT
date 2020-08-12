@@ -143,14 +143,6 @@ private:
     Serial.println(avgSpeed);
 		return avgSpeed;
 	}
-
-	/*
-		bool isMoving();
-
-		bool isFlapping();
-
-		double avarageDistance();
-	*/
 };
 
 
