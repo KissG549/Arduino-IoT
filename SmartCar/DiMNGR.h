@@ -64,12 +64,7 @@ private:
       Serial.println("Distance buffer size less than 3");
 			return 0;
 		}
-		/*
-     double baseValue = distanceBuff[distanceBuff.size() - 1];
-		double minValue = baseValue - pTolerance;
-		double maxValue = baseValue + pTolerance;
-    */
-    
+       
 		Buffer<double> historyBuffer;
 
     Serial.println("Hist Buffer created");
