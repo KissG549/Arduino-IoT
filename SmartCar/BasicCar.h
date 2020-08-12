@@ -7,7 +7,7 @@
 #include "BHCSR04.h"
 #include "DiMNGR.h"
 
-const double MIN_REQUIRED_DIST_FOR_TURN = 10.0;
+const double MIN_REQUIRED_DIST_FOR_GO = 10.0;
 
 class BasicCar
 {
