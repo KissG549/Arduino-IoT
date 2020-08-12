@@ -14,34 +14,34 @@ void BasicCar::move()
       adaptSpeedByDistance(distance);
       
       double tolerance = 1.0; // cm
-      uint8_t isMoving = mDistanceMNGR->isMoving( tolerance );
 
       if( mMotorsRunning )
       {
+        uint8_t isMoving = mDistanceMNGR->isMoving( tolerance );
         if( !isMoving )
         {
           // if motors are running, but the car has stopped
           stop();
           moveBackward();
           delay(100);
+          stop();
           obstackleAvoidance(distance);  
         }
         // if motors running and the car is moving, it's ok
-          
       }
       else
       {
           moveForward();
-      }
+      } // END motors running
       
     }
     else // we can't move
     {
       stop();
       obstackleAvoidance(distance);  
-    }
+    } // END canMove
     
-  }
+  } // END while
 
 }
 
@@ -149,21 +149,21 @@ void BasicCar::adaptSpeedByDistance(double distance)
         {
           setMotorSpeed(250);
         }
-        else if ( distance <= 50.0 && distance > 30.0 )
+    else if ( distance <= 50.0 && distance > 30.0 )
         {
           // slowing down
           setMotorSpeed(220);
         }
-        else if ( distance <= 30.0 && distance > 10.0 )
+    else if ( distance <= 30.0 && distance > 10.0 )
         {
           // slowing down  
           setMotorSpeed(180);
         } 
-        else if ( distance < 10.0)
+    else if ( distance < 10.0)
         {
           setMotorSpeed(130);
         }
-        else
+    else
         {
           setMotorSpeed(200);
         }
