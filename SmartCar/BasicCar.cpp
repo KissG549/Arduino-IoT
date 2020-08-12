@@ -8,7 +8,7 @@ void BasicCar::move()
     double distance = mDistanceMNGR->measureDistanceCm();
 
     // can we move?
-    if( canWeMove(distance) )
+    if( canMove(distance) )
     {
       // we can move forward
       adaptSpeedByDistance(distance);
@@ -145,4 +145,31 @@ void BasicCar::setMotorSpeed(uint8_t speed)
 
 void BasicCar::adaptSpeedByDistance(double distance)
 {  
+    if ( distance > 50.0 )
+        {
+          setMotorSpeed(250);
+        }
+        else if ( distance <= 50.0 && distance > 30.0 )
+        {
+          // slowing down
+          setMotorSpeed(220);
+        }
+        else if ( distance <= 30.0 && distance > 10.0 )
+        {
+          // slowing down  
+          setMotorSpeed(180);
+        } 
+        else if ( distance < 10.0)
+        {
+          setMotorSpeed(130);
+        }
+        else
+        {
+          setMotorSpeed(200);
+        }
+}
+
+bool BasicCar::canMove(double distance)
+{
+  return distance > 10.0;  
 }
