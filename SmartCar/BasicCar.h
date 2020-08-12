@@ -51,8 +51,6 @@ public:
 
 	void setDistanceMNGR(DistanceManager& pDistanceMNGR);
 
-	void lookForDirection(double distance);
-
 private:
 	AF_DCMotor mMotorFrontLeft;
 	AF_DCMotor mMotorFrontRight;
@@ -66,6 +64,7 @@ private:
   void setMotorSpeed(uint8_t speed);
   void adaptSpeedByDistance(double distance);
   bool canMove(double distance);
+  void obstackleAvoidance(double distance);
   
 };
 

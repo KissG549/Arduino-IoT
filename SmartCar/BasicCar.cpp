@@ -85,35 +85,6 @@ void BasicCar::setDistanceMNGR(DistanceManager& pDistanceMNGR)
 	mDistanceMNGR = &pDistanceMNGR;
 }
 
-void BasicCar::lookForDirection(double distance)
-{
-	uint8_t maxTry = 10;
-	uint8_t tryCounter = 0;
-
-	stop();
-
-	while (distance < MIN_REQUIRED_DIST_FOR_TURN)
-	{
-		turnRight();
-		delay(100);
-    stop();
-		distance = mDistanceMNGR->measureDistanceCm();
-		Serial.print("2 Distance: ");
-		Serial.println(distance);
-
-		if (++tryCounter >= maxTry)
-		{
-			break;
-		}
-	}
-	
-	if (tryCounter >= maxTry) 
-	{
-		stop();
-	}
-
-}
-
 void BasicCar::motorsControl(const uint8_t pFrlCmd, uint8_t pFrrCmd = 0, uint8_t pRelCmd = 0, uint8_t pRerCmd = 0)
 {
 	if (pFrrCmd == 0)
@@ -172,4 +143,32 @@ void BasicCar::adaptSpeedByDistance(double distance)
 bool BasicCar::canMove(double distance)
 {
   return distance > 10.0;  
+}
+
+void BasicCar::obstackleAvoidance(double distance)
+{
+      uint8_t maxTry = 10;
+  uint8_t tryCounter = 0;
+
+  stop();
+
+  while (distance < MIN_REQUIRED_DIST_FOR_TURN)
+  {
+    turnRight();
+    delay(100);
+    stop();
+    distance = mDistanceMNGR->measureDistanceCm();
+    Serial.print("2 Distance: ");
+    Serial.println(distance);
+
+    if (++tryCounter >= maxTry)
+    {
+      break;
+    }
+  }
+  
+  if (tryCounter >= maxTry) 
+  {
+    stop();
+  }
 }
