@@ -11,7 +11,6 @@ public:
 	BufferedUltraSonicDistanceSensor(int pTriggerPin, int pEchoPin)
 		: UltraSonicDistanceSensor(pTriggerPin, pEchoPin)
 	{
-		//mDistanceBuffer = new double[MAX_BUFFER_SIZE];
 	};
 
 	double measureDistanceCm();
