@@ -7,15 +7,25 @@ void BasicCar::move()
 {
   while( true )
   {
+#ifdef DEBUG_CAR
+      Serial.println("While->");
+#endif
     double distance = mDistanceMNGR->measureDistanceCm();
 
+    String output = String(static_cast<uint8_t>(distance));
+    mDisplay->clear();
+    mDisplay->print( output );
+    
 #ifdef DEBUG_CAR
-      Serial.print("Distance: ");
+      Serial.print("While-> Distance: ");
       Serial.println( distance ); 
 #endif
     // can we move?
     if( canMove(distance) )
     {
+#ifdef DEBUG_CAR
+      Serial.println("While-> if( canMove(distance) ) We can Move");
+#endif
       // we can move forward
       adaptSpeedByDistance(distance);
       
@@ -23,8 +33,14 @@ void BasicCar::move()
 
       if( mMotorsRunning )
       {
+#ifdef DEBUG_CAR
+      Serial.println("if( mMotorsRunning )Motors Running");
+#endif
         if( ! mDistanceMNGR->isMoving( tolerance ) )
         {
+#ifdef DEBUG_CAR
+      Serial.println("if( ! mDistanceMNGR->isMoving( tolerance ) ) The car doesn't move");
+#endif
           // if motors are running, but the car has stopped
           stop();
           obstackleAvoidance(distance);  
@@ -33,12 +49,18 @@ void BasicCar::move()
       }
       else
       {
+#ifdef DEBUG_CAR
+      Serial.println("else Move forward");
+#endif
           moveForward();
       } // END motors running
       
     }
     else // we can't move
     {
+#ifdef DEBUG_CAR
+      Serial.println("else We can't move");
+#endif
       stop();
       obstackleAvoidance(distance);  
     } // END canMove
@@ -52,6 +74,8 @@ void BasicCar::moveForward()
 	motorsControl(FORWARD);
 	Serial.println("Move forward");
   mMotorsRunning = true;
+  mDisplay->clear();
+  mDisplay->print( "F" );
 }
 
 void BasicCar::moveBackward()
@@ -65,6 +89,8 @@ void BasicCar::turnLeft()
 {
 	motorsControl(BACKWARD, FORWARD, BACKWARD, FORWARD);
 	Serial.println("Turn left");
+  mDisplay->clear();
+  mDisplay->print( "L" );
   mMotorsRunning = true;
 }
 
@@ -72,6 +98,8 @@ void BasicCar::turnRight()
 {
 	motorsControl(FORWARD, BACKWARD, FORWARD, BACKWARD);
 	Serial.println("Turn right");
+  mDisplay->clear();
+  mDisplay->print( "R" );
   mMotorsRunning = true;
 }
 
@@ -80,11 +108,18 @@ void BasicCar::stop()
   mMotorsRunning = false;
 	motorsControl(RELEASE);
 	Serial.println("Stop");
+  mDisplay->clear();
+  mDisplay->print( "STOP" );
 }
 
-void BasicCar::setDistanceMNGR(DistanceManager& pDistanceMNGR)
+void BasicCar::setDisplay(SevenSegmentExtended* disp)
 {
-	mDistanceMNGR = &pDistanceMNGR;
+  mDisplay = disp;
+}
+
+void BasicCar::setDistanceMNGR(DistanceManager* pDistanceMNGR)
+{
+	mDistanceMNGR = pDistanceMNGR;
 }
 
 void BasicCar::motorsControl(const uint8_t pFrlCmd, uint8_t pFrrCmd = 0, uint8_t pRelCmd = 0, uint8_t pRerCmd = 0)
@@ -107,47 +142,57 @@ void BasicCar::motorsControl(const uint8_t pFrlCmd, uint8_t pFrrCmd = 0, uint8_t
 	mMotorRearRight.run(pRerCmd);
 }
 
-void BasicCar::setMotorSpeed(uint8_t speed)
+void BasicCar::setMotorSpeed(uint8_t spd)
 {
-    mMotorFrontLeft.setSpeed(speed);
-    mMotorFrontRight.setSpeed(speed);
-    mMotorRearLeft.setSpeed(speed);
-    mMotorRearRight.setSpeed(speed);
+    mMotorFrontLeft.setSpeed(spd);
+    mMotorFrontRight.setSpeed(spd);
+    mMotorRearLeft.setSpeed(spd);
+    mMotorRearRight.setSpeed(spd);
+
+ #ifdef DEBUG_CAR
+      Serial.print("setMotorSpeed to ");
+      Serial.println(spd); 
+ #endif     
 }
 
 
 void BasicCar::adaptSpeedByDistance(double distance)
 {  
-  #ifdef DEBUG_CAR
-      Serial.println("Adapting speed"); 
-  #endif
+  uint8_t spd = 255;
     if ( distance > 50.0 )
         {
-          setMotorSpeed(250);
+          spd = 250;
         }
     else if ( distance <= 50.0 && distance > 30.0 )
         {
           // slowing down
-          setMotorSpeed(220);
+          spd = 220;
         }
-    else if ( distance <= 30.0 && distance > 10.0 )
+    else if ( distance <= 30.0 && distance > MIN_REQUIRED_DIST_FOR_GO )
         {
           // slowing down  
-          setMotorSpeed(180);
+          spd = 180;
         } 
-    else if ( distance < 10.0)
+    else if ( distance <= MIN_REQUIRED_DIST_FOR_GO )
         {
-          setMotorSpeed(130);
+          spd = 130;
         }
     else
         {
-          setMotorSpeed(200);
+          spd = 200;
         }
+ 
+ #ifdef DEBUG_CAR
+      Serial.print("Adapting speed to ");
+      Serial.println(spd); 
+ #endif    
+  
+    setMotorSpeed(spd);
 }
 
 bool BasicCar::canMove(double distance)
 {
-  return distance > 10.0;  
+  return distance > MIN_REQUIRED_DIST_FOR_GO;  
 }
 
 void BasicCar::obstackleAvoidance(double distance)
@@ -207,7 +252,10 @@ void BasicCar::obstackleAvoidance(double distance)
      delay(turnTime);
      stop();
      distance = mDistanceMNGR->measureDistanceCm();
-     
+
+     String output = String(static_cast<uint8_t>(distance));
+     mDisplay->print( output );
+     mDisplay->clear();
      // has the distance changed ?
      // if( !(prevDistance - distanceTolerance < distance 
      //  && prevDistance + distanceTolerance > distance ) )
