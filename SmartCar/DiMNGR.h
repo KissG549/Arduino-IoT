@@ -56,10 +56,10 @@ private:
      *  
 		*/
 		
-		Buffer<double> distanceBuff = mBUltrasonicSensor->buffer();
+		Buffer<double>* distanceBuff = &(mBUltrasonicSensor->buffer());
    Serial.println("Buffer copied");
 
-		if (distanceBuff.size() < 3)
+		if (distanceBuff->size() < 3)
 		{
       Serial.println("Distance buffer size less than 3");
 			return 0;
@@ -88,9 +88,9 @@ private:
 		*/
 
     Serial.println("Checking distances");
-		for ( int it = distanceBuff.size() - 1; it > 0; --it )
+		for ( int it = distanceBuff->size() - 1; it > 0; --it )
 		{
-			double diff = distanceBuff[it - 1] - distanceBuff[it];
+			double diff = distanceBuff->at(it - 1) - distanceBuff->at(it);
       Serial.print("Distance is");
       Serial.println(diff);
 
