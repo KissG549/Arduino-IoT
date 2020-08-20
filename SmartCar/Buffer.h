@@ -65,6 +65,11 @@ public:
 		return mSize;
 	};
 
+  T& at(const uint8_t pPos) const
+  {
+    return mRawBuffer[pPos];
+  };
+
 	T& operator[](const uint8_t pPos) const
 	{
 		return mRawBuffer[pPos];
