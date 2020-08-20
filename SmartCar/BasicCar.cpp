@@ -64,9 +64,38 @@ void BasicCar::move()
       stop();
       obstackleAvoidance(distance);  
     } // END canMove
-   // delay(2000);
+    delay(200);
   } // END while
 
+}
+
+void BasicCar::move_v2()
+{
+  while(true)
+  {
+      double distance = mDistanceMNGR->measureDistanceCm();
+
+      String output = String(static_cast<uint8_t>(distance));
+      mDisplay->clear();
+      mDisplay->print( output );
+      Serial.print("Distance: ");
+      Serial.println(distance);
+    
+      adaptSpeedByDistance(distance);
+      
+      if( canMove(distance) )
+      {
+         if( !mMotorsRunning  )
+         {
+            moveForward();
+         }
+      }
+      else
+      {
+            obstackleAvoidance_v2(distance);
+      }
+      delay(1000);
+  }  
 }
 
 void BasicCar::moveForward()
@@ -150,8 +179,8 @@ void BasicCar::setMotorSpeed(uint8_t spd)
     mMotorRearRight.setSpeed(spd);
 
  #ifdef DEBUG_CAR
-      Serial.print("setMotorSpeed to ");
-      Serial.println(spd); 
+     // Serial.print("setMotorSpeed to ");
+     // Serial.println(spd); 
  #endif     
 }
 
@@ -159,6 +188,11 @@ void BasicCar::setMotorSpeed(uint8_t spd)
 void BasicCar::adaptSpeedByDistance(double distance)
 {  
   uint8_t spd = 255;
+
+#ifdef DEBUG_CAR
+  distance = 10.0;
+#endif
+  
     if ( distance > 50.0 )
         {
           spd = 250;
@@ -183,8 +217,8 @@ void BasicCar::adaptSpeedByDistance(double distance)
         }
  
  #ifdef DEBUG_CAR
-      Serial.print("Adapting speed to ");
-      Serial.println(spd); 
+     // Serial.print("Adapting speed to ");
+     // Serial.println(spd); 
  #endif    
   
     setMotorSpeed(spd);
@@ -193,6 +227,11 @@ void BasicCar::adaptSpeedByDistance(double distance)
 bool BasicCar::canMove(double distance)
 {
   return distance > MIN_REQUIRED_DIST_FOR_GO;  
+}
+
+bool BasicCar::canTurn(double distance)
+{
+  return distance > MIN_REQUIRED_DIST_FOR_TURN;
 }
 
 void BasicCar::obstackleAvoidance(double distance)
@@ -206,17 +245,13 @@ void BasicCar::obstackleAvoidance(double distance)
   {
     stop();
   }
-
-  // base turn time in ms
-  static const uint8_t xValue = 100;
-  // in ms
-  static const uint8_t tBackward = 100;
-  // to prevent infinite loop
-  static const uint8_t maxTry = 15;
   
-  // required turn distance in cm
-  //static const uint8_t turnDistance = 7.0;
+  static const uint8_t xValue     = 200; // base turn time in ms
   
+  static const uint8_t tBackward  = 200; // in ms
+  
+  static const uint8_t maxTry     = 30; // to prevent infinite loop
+    
   uint8_t turnTime = 0;
 
   static const double distanceTolerance = 1.0;
@@ -224,14 +259,14 @@ void BasicCar::obstackleAvoidance(double distance)
   // do we have enough space to have a turn?
    uint8_t turnCounter = 0;
  // while( distance <= turnDistance )
-   while( !canMove(distance) || !turnCounter )
+   while( !canMove(distance) )
   {
      moveBackward();
      delay(tBackward); 
      stop();
      //prevDistance = distance;
      // distance = mDistanceMNGR->measureDistanceCm();
-     if(turnCounter++ >= maxTry)
+     if(turnCounter >= maxTry)
      {
 #ifdef DEBUG_CAR
       Serial.println("Not able to have enough distance to have a turn. Giving up."); 
@@ -241,7 +276,7 @@ void BasicCar::obstackleAvoidance(double distance)
      
      // turn right or left
      turnTime += xValue;
-     if( turnCounter++ % 2 == 0)
+     if( turnCounter % 2 == 0)
      {
        turnRight();
      }
@@ -253,9 +288,10 @@ void BasicCar::obstackleAvoidance(double distance)
      stop();
      distance = mDistanceMNGR->measureDistanceCm();
 
+     mDisplay->clear();
      String output = String(static_cast<uint8_t>(distance));
      mDisplay->print( output );
-     mDisplay->clear();
+     
      // has the distance changed ?
      // if( !(prevDistance - distanceTolerance < distance 
      //  && prevDistance + distanceTolerance > distance ) )
@@ -275,36 +311,81 @@ void BasicCar::obstackleAvoidance(double distance)
           return;
         }
       }
-    
+      turnCounter++;
     }// END while
   
 
 #ifdef DEBUG_CAR
       Serial.println("ObstackleAvoidance has finished"); 
 #endif
-  return;
-  
- /* uint8_t maxTry = 10;
-  uint8_t tryCounter = 0;
-  
-  while (distance <= MIN_REQUIRED_DIST_FOR_TURN)
+}
+
+
+void BasicCar::obstackleAvoidance_v2(double distance)
+{
+  static const uint8_t xValue = 200; // base turn time in ms
+  static const uint8_t tBackward = 50; // in ms
+  static const uint8_t maxTry = 30; // to prevent infinite loop
+  static const double  distanceTolerance = 1.0;
+  uint8_t turnTime = 0;
+
+  if( mMotorsRunning )
   {
-    turnRight();
-    delay(100);
+    stop();
+  }
+
+  while( !canTurn( distance ) )
+  {
+    moveBackward();
+    delay(tBackward); 
     stop();
     distance = mDistanceMNGR->measureDistanceCm();
-    Serial.print("2 Distance: ");
-    Serial.println(distance);
 
-    if (++tryCounter >= maxTry)
-    {
-      break;
-    }
+    String output = String(static_cast<uint8_t>(distance));
+    mDisplay->clear();
+    mDisplay->print( output );
   }
+
+  uint8_t turnCounter = 0;
+
+  Serial.println("<------->Start the loop");
   
-  if (tryCounter >= maxTry) 
-  {
-    stop();
-  }
-  */
+  do{
+     turnTime += xValue;
+     
+     Serial.print("Turn counter: ");
+     Serial.println(turnCounter);
+     Serial.print("Turn time: ");
+     Serial.println(turnTime);
+
+     if( turnCounter % 2 == 0)
+     {
+       turnRight();
+       mDisplay->clear();
+       mDisplay->print( "R" );
+       Serial.print(">Turn right ");
+     }
+     else
+     {
+       turnLeft();  
+       mDisplay->clear();
+       mDisplay->print( "L" );
+       Serial.print(">Turn left");
+     }
+
+     Serial.println( turnTime );
+     delay(turnTime);
+     stop();
+     distance = mDistanceMNGR->measureDistanceCm();
+
+     mDisplay->clear();
+     String output = String(static_cast<uint8_t>(distance));
+     mDisplay->print( output );
+
+    ++turnCounter;
+    delay(2000);
+  }while(  mDistanceMNGR->isMoving(3.0) );
+
+    Serial.println("<------->END the loop");
+
 }
