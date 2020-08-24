@@ -38,11 +38,19 @@ public:
 		: mMaxSize(pSize), mSize(0)
 	{	
     mRawBuffer = new T[pSize];
+#ifdef DEBUG_CAR
+     Serial.print("Buffer created, size: ");
+     Serial.println(pSize); 
+#endif
 	};
 
 	~Buffer()
 	{
 		delete[] mRawBuffer;
+#ifdef DEBUG_CAR
+     Serial.print("Buffer deleted, size: ");
+     Serial.println(mSize); 
+#endif
 	};
 
 	void add(T pValue)
