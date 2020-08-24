@@ -1,8 +1,13 @@
 #ifndef _BasicCar_h_
 #define _BasicCar_h_
 
+
+#ifndef DEBUG_CAR
+#define DEBUG_CAR 1
+#endif
+
+
 #include <AFMotor.h>
-//#include <inttypes.h>
 #include <SevenSegmentTM1637.h>
 #include <SevenSegmentExtended.h>
 #include "Arduino.h"
@@ -47,13 +52,12 @@ public:
 	~BasicCar() {};
 
 	void move();
-  void move_v2();
-	void moveForward();
-	void moveBackward();
-	void turnLeft();
-	void turnRight();
+	void moveForward(uint8_t pDelayMsec = 100);
+	void moveBackward(uint8_t pDelayMsec = 100);
+	void turnLeft(uint8_t pDelayMsec = 100);
+	void turnRight(uint8_t pDelayMsecec = 100);
 	void stop();
-  void setDisplay(SevenSegmentExtended* disp);
+  void setDisplay(SevenSegmentExtended* pDisp);
 
 	void setDistanceMNGR(DistanceManager* pDistanceMNGR);
 
@@ -69,12 +73,11 @@ private:
   SevenSegmentExtended *mDisplay;
   
 	void motorsControl(const uint8_t pFrlCmd, uint8_t pFrrCmd = 0, uint8_t pRelCmd = 0, uint8_t pRerCmd = 0);
-  void setMotorSpeed(uint8_t speed);
-  void adaptSpeedByDistance(double distance);
-  bool canMove(double distance);
-  bool canTurn(double distance);
-  void obstackleAvoidance(double distance);
-  void obstackleAvoidance_v2(double distance);
+  void setMotorSpeed(uint8_t pSpeed);
+  void adaptSpeedByDistance(double pDistance);
+  bool canMove(double pDistance);
+  bool canTurn(double pDistance);
+  void obstackleAvoidance(double pDistance);
 
 };
 
