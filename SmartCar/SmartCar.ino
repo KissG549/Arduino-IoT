@@ -5,6 +5,10 @@
 #include "BasicCar.h"
 #include "DiMNGR.h"
 
+#ifndef DEBUG_CAR
+#define DEBUG_CAR 1
+#endif
+
 const uint8_t DISPLAY_BRIGHTNESS = 30;
 
 const uint8_t TM1637_CLK_PIN  = A1;
