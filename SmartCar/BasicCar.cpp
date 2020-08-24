@@ -1,44 +1,73 @@
 #include "BasicCar.h"
 #include "DiMNGR.h"
 
-#define DEBUG_CAR 1
-
 void BasicCar::move()
 {
+  while(true)
+  {
+    double distance = mDistanceMNGR->measureDistanceCm();
+
+     String output = String(static_cast<uint8_t>(distance));
+     mDisplay->clear();
+     mDisplay->print( output );
+#ifdef DEBUG_CAR
+     Serial.print("Distance: ");
+     Serial.println(distance);
+#endif
+      
+     adaptSpeedByDistance(distance);
+
+      if( canMove(distance) )
+      {
+        if(!mMotorsRunning)
+        {
+          moveForward(0);
+        }
+      }
+      else
+      {
+        obstackleAvoidance(distance);
+      }
+      delay(1000);
+  } // END while
 }
 
-void BasicCar::moveForward()
+void BasicCar::moveForward(uint8_t pDelayMsec )
 {
 	motorsControl(FORWARD);
 	Serial.println("Move forward");
   mMotorsRunning = true;
   mDisplay->clear();
   mDisplay->print( "F" );
+  delay(pDelayMsec);
 }
 
-void BasicCar::moveBackward()
+void BasicCar::moveBackward(uint8_t pDelayMsec )
 {
 	motorsControl(BACKWARD);
 	Serial.println("Move backward");
   mMotorsRunning = true;
+  delay(pDelayMsec);
 }
 
-void BasicCar::turnLeft()
+void BasicCar::turnLeft(uint8_t pDelayMsec )
 {
 	motorsControl(BACKWARD, FORWARD, BACKWARD, FORWARD);
 	Serial.println("Turn left");
   mDisplay->clear();
   mDisplay->print( "L" );
   mMotorsRunning = true;
+  delay(pDelayMsec);
 }
 
-void BasicCar::turnRight()
+void BasicCar::turnRight(uint8_t pDelayMsec )
 {
 	motorsControl(FORWARD, BACKWARD, FORWARD, BACKWARD);
 	Serial.println("Turn right");
   mDisplay->clear();
   mDisplay->print( "R" );
   mMotorsRunning = true;
+  delay(pDelayMsec);
 }
 
 void BasicCar::stop()
@@ -50,9 +79,9 @@ void BasicCar::stop()
   mDisplay->print( "STOP" );
 }
 
-void BasicCar::setDisplay(SevenSegmentExtended* disp)
+void BasicCar::setDisplay(SevenSegmentExtended* pDisp)
 {
-  mDisplay = disp;
+  mDisplay = pDisp;
 }
 
 void BasicCar::setDistanceMNGR(DistanceManager* pDistanceMNGR)
@@ -80,7 +109,7 @@ void BasicCar::motorsControl(const uint8_t pFrlCmd, uint8_t pFrrCmd = 0, uint8_t
 	mMotorRearRight.run(pRerCmd);
 }
 
-void BasicCar::setMotorSpeed(uint8_t spd)
+void BasicCar::setMotorSpeed(uint8_t pSpd)
 {
     mMotorFrontLeft.setSpeed(spd);
     mMotorFrontRight.setSpeed(spd);
@@ -94,7 +123,7 @@ void BasicCar::setMotorSpeed(uint8_t spd)
 }
 
 
-void BasicCar::adaptSpeedByDistance(double distance)
+void BasicCar::adaptSpeedByDistance(double pDistance)
 {  
   uint8_t spd = 255;
 
@@ -133,16 +162,20 @@ void BasicCar::adaptSpeedByDistance(double distance)
     setMotorSpeed(spd);
 }
 
-bool BasicCar::canMove(double distance)
+bool BasicCar::canMove(double pDistance)
 {
   return distance > MIN_REQUIRED_DIST_FOR_GO;  
 }
 
-bool BasicCar::canTurn(double distance)
+bool BasicCar::canTurn(double pDistance)
 {
   return distance > MIN_REQUIRED_DIST_FOR_TURN;
 }
 
-void BasicCar::obstackleAvoidance(double distance)
+void BasicCar::obstackleAvoidance(double pDistance)
 {
+   if(mMotorsRunning)
+   {
+    stop();
+   }
 }
