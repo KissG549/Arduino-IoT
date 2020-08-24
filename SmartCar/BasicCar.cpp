@@ -111,41 +111,34 @@ void BasicCar::motorsControl(const uint8_t pFrlCmd, uint8_t pFrrCmd = 0, uint8_t
 
 void BasicCar::setMotorSpeed(uint8_t pSpd)
 {
-    mMotorFrontLeft.setSpeed(spd);
-    mMotorFrontRight.setSpeed(spd);
-    mMotorRearLeft.setSpeed(spd);
-    mMotorRearRight.setSpeed(spd);
+    mMotorFrontLeft.setSpeed(pSpd);
+    mMotorFrontRight.setSpeed(pSpd);
+    mMotorRearLeft.setSpeed(pSpd);
+    mMotorRearRight.setSpeed(pSpd);
 
  #ifdef DEBUG_CAR
-     // Serial.print("setMotorSpeed to ");
-     // Serial.println(spd); 
+      //Serial.print("setMotorSpeed to ");
+      //Serial.println(spd); 
  #endif     
 }
-
 
 void BasicCar::adaptSpeedByDistance(double pDistance)
 {  
   uint8_t spd = 255;
 
-#ifdef DEBUG_CAR
-  distance = 10.0;
-#endif
-  
-    if ( distance > 50.0 )
+    if ( pDistance > DISTANCE_FAR )
         {
           spd = 250;
         }
-    else if ( distance <= 50.0 && distance > 30.0 )
+    else if ( pDistance <= DISTANCE_FAR && pDistance > DISTANCE_MIDDLE )
         {
-          // slowing down
           spd = 220;
         }
-    else if ( distance <= 30.0 && distance > MIN_REQUIRED_DIST_FOR_GO )
-        {
-          // slowing down  
+    else if ( pDistance <= DISTANCE_MIDDLE && pDistance > DISTANCE_CLOSE )
+        { 
           spd = 180;
         } 
-    else if ( distance <= MIN_REQUIRED_DIST_FOR_GO )
+    else if ( pDistance <= DISTANCE_CLOSE )
         {
           spd = 130;
         }
@@ -155,8 +148,8 @@ void BasicCar::adaptSpeedByDistance(double pDistance)
         }
  
  #ifdef DEBUG_CAR
-     // Serial.print("Adapting speed to ");
-     // Serial.println(spd); 
+     Serial.print("Adapting speed to ");
+     Serial.println(spd); 
  #endif    
   
     setMotorSpeed(spd);
@@ -164,12 +157,12 @@ void BasicCar::adaptSpeedByDistance(double pDistance)
 
 bool BasicCar::canMove(double pDistance)
 {
-  return distance > MIN_REQUIRED_DIST_FOR_GO;  
+  return pDistance > MIN_REQUIRED_DIST_FOR_GO;  
 }
 
 bool BasicCar::canTurn(double pDistance)
 {
-  return distance > MIN_REQUIRED_DIST_FOR_TURN;
+  return pDistance > MIN_REQUIRED_DIST_FOR_TURN;
 }
 
 void BasicCar::obstackleAvoidance(double pDistance)
