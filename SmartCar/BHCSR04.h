@@ -10,8 +10,7 @@ class BufferedUltraSonicDistanceSensor : public UltraSonicDistanceSensor {
 public:
 	BufferedUltraSonicDistanceSensor(int pTriggerPin, int pEchoPin)
 		: UltraSonicDistanceSensor(pTriggerPin, pEchoPin)
-	{
-	};
+	{};
 
 	double measureDistanceCm();
 
