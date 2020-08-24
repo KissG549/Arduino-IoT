@@ -1,6 +1,10 @@
 #ifndef _DIMNGR_H_
 #define _DIMNGR_H_
 
+#ifndef DEBUG_CAR
+#define DEBUG_CAR 1
+#endif
+
 #include "Arduino.h"
 #include "BHCSR04.h"
 #include "Buffer.h"
