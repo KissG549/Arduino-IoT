@@ -3,9 +3,26 @@
 
 void BasicCar::move()
 {
+/*  
+ *   Identify minimal speed to mooving
+  uint8_t spd = 0;
+  while(!mDistanceMNGR->isMoving(2.0))
+  {
+    setMotorSpeed(++spd);
+    moveForward(50);
+    mDistanceMNGR->measureDistanceCm();
+    mDisplay->clear();
+    mDisplay->print( spd );
+#ifdef DEBUG_CAR
+     Serial.print("Speed: ");
+     Serial.println(spd);
+#endif
+  }
+  delay(10000);
+ */
   while(true)
   {
-    double distance = mDistanceMNGR->measureDistanceCm();
+     double distance = mDistanceMNGR->measureDistanceCm();
 
      String output = String(static_cast<uint8_t>(distance));
      mDisplay->clear();
@@ -28,7 +45,7 @@ void BasicCar::move()
       {
         obstackleAvoidance(distance);
       }
-      delay(1000);
+      delay(10);
   } // END while
 }
 
@@ -124,6 +141,11 @@ void BasicCar::setMotorSpeed(uint8_t pSpd)
 
 void BasicCar::adaptSpeedByDistance(double pDistance)
 {  
+  if(!mMotorsRunning)
+  {
+    return;
+  }
+  
   uint8_t spd = 255;
 
     if ( pDistance > DISTANCE_FAR )
@@ -132,15 +154,15 @@ void BasicCar::adaptSpeedByDistance(double pDistance)
         }
     else if ( pDistance <= DISTANCE_FAR && pDistance > DISTANCE_MIDDLE )
         {
-          spd = 220;
+          spd = 200;
         }
     else if ( pDistance <= DISTANCE_MIDDLE && pDistance > DISTANCE_CLOSE )
         { 
-          spd = 180;
+          spd = 150;
         } 
     else if ( pDistance <= DISTANCE_CLOSE )
         {
-          spd = 130;
+          spd = 100;
         }
     else
         {
