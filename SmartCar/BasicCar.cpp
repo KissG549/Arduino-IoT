@@ -34,12 +34,9 @@ void BasicCar::move()
       
      adaptSpeedByDistance(distance);
 
-      if( canMove(distance) )
+      if( canMove(distance) && !mMotorsRunning )
       {
-        if(!mMotorsRunning)
-        {
           moveForward(0);
-        }
       }
       else
       {
