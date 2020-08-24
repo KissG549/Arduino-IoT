@@ -67,7 +67,9 @@ private:
        
 		Buffer<double> historyBuffer;
 
+#ifdef DEBUG_CAR
     Serial.println("Hist Buffer created");
+#endif
 		int counter = 0;
 		uint8_t increasing = 0;
 		uint8_t decreasing = 0;
@@ -87,13 +89,17 @@ private:
 
 		*/
 
+#ifdef DEBUG_CAR
     Serial.println("Checking distances");
+#endif
+
 		for ( int it = distanceBuff->size() - 1; it > 0; --it )
 		{
 			double diff = distanceBuff->at(it - 1) - distanceBuff->at(it);
+#ifdef DEBUG_CAR
       Serial.print("Distance is");
       Serial.println(diff);
-
+#endif
 			if ( diff >= 0.0 - pTolerance && diff <= pTolerance )
 			{
 				// stopped
@@ -125,7 +131,9 @@ private:
 			historyBuffer.add( diff );
 		}
 
+#ifdef DEBUG_CAR
     Serial.println("Calc avg distance");
+#endif
 		double avgSpeed = 0.0;
 		for (int it = 0; it < historyBuffer.size(); ++it)
 		{
@@ -134,8 +142,11 @@ private:
 
 		avgSpeed /= historyBuffer.size();
 
+#ifdef DEBUG_CAR
     Serial.print("Avg speed is:");
     Serial.println(avgSpeed);
+#endif
+
 		return avgSpeed;
 	}
 };
