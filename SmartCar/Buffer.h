@@ -2,6 +2,10 @@
 #ifndef _BUFFER_H_
 #define _BUFFER_H_
 
+#ifndef DEBUG_CAR
+  #define DEBUG_CAR 1
+#endif
+
 /*
 	A custom buffer to store values temporary
 
