@@ -2,8 +2,8 @@
 #ifndef _BUFFER_H_
 #define _BUFFER_H_
 
-#ifndef DEBUG_CAR
-  #define DEBUG_CAR 1
+#ifndef DEBUG_BUFFER
+ // #define DEBUG_BUFFER 1
 #endif
 
 /*
@@ -42,7 +42,7 @@ public:
 		: mMaxSize(pSize), mSize(0)
 	{	
     mRawBuffer = new T[pSize];
-#ifdef DEBUG_CAR
+#ifdef DEBUG_BUFFER
      Serial.print("Buffer created, size: ");
      Serial.println(pSize); 
 #endif
@@ -51,7 +51,7 @@ public:
 	~Buffer()
 	{
 		delete[] mRawBuffer;
-#ifdef DEBUG_CAR
+#ifdef DEBUG_BUFFER
      Serial.print("Buffer deleted, size: ");
      Serial.println(mSize); 
 #endif
@@ -107,10 +107,8 @@ private:
 			++pos)
 		{
 			mRawBuffer[pos - 1] = mRawBuffer[pos];
-			//std::cout << mRawBuffer[pos] << " ";
 		}
 
-		//std::cout << std::endl;
 	};
 };
 
