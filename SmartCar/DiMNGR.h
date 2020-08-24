@@ -1,8 +1,8 @@
 #ifndef _DIMNGR_H_
 #define _DIMNGR_H_
 
-#ifndef DEBUG_CAR
-#define DEBUG_CAR 1
+#ifndef DEBUG_DMGR
+//#define DEBUG_DMGR 1
 #endif
 
 #include "Arduino.h"
@@ -61,7 +61,7 @@ private:
 		*/
 		
 		Buffer<double>* distanceBuff = &(mBUltrasonicSensor->buffer());
-   Serial.println("Buffer copied");
+    //Serial.println("Buffer copied");
 
 		if (distanceBuff->size() < 3)
 		{
@@ -71,7 +71,7 @@ private:
        
 		Buffer<double> historyBuffer;
 
-#ifdef DEBUG_CAR
+#ifdef DEBUG_DMGR
     Serial.println("Hist Buffer created");
 #endif
 		int counter = 0;
@@ -93,14 +93,14 @@ private:
 
 		*/
 
-#ifdef DEBUG_CAR
+#ifdef DEBUG_DMGR
     Serial.println("Checking distances");
 #endif
 
 		for ( int it = distanceBuff->size() - 1; it > 0; --it )
 		{
 			double diff = distanceBuff->at(it - 1) - distanceBuff->at(it);
-#ifdef DEBUG_CAR
+#ifdef DEBUG_DMGR
       Serial.print("Distance is");
       Serial.println(diff);
 #endif
@@ -135,7 +135,7 @@ private:
 			historyBuffer.add( diff );
 		}
 
-#ifdef DEBUG_CAR
+#ifdef DEBUG_DMGR
     Serial.println("Calc avg distance");
 #endif
 		double avgSpeed = 0.0;
@@ -146,7 +146,7 @@ private:
 
 		avgSpeed /= historyBuffer.size();
 
-#ifdef DEBUG_CAR
+#ifdef DEBUG_DMGR
     Serial.print("Avg speed is:");
     Serial.println(avgSpeed);
 #endif
