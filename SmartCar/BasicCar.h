@@ -6,7 +6,6 @@
 #define DEBUG_CAR 1
 #endif
 
-
 #include <AFMotor.h>
 #include <SevenSegmentTM1637.h>
 #include <SevenSegmentExtended.h>
@@ -14,8 +13,11 @@
 #include "BHCSR04.h"
 #include "DiMNGR.h"
 
-static const double MIN_REQUIRED_DIST_FOR_GO = 12.0;
-static const double MIN_REQUIRED_DIST_FOR_TURN = 17.0;
+static const float MIN_REQUIRED_DIST_FOR_GO = 12.0;
+static const float MIN_REQUIRED_DIST_FOR_TURN = 17.0;
+static const float DISTANCE_CLOSE = 10.0;
+static const float DISTANCE_MIDDLE = 30.0;
+static const float DISTANCE_FAR = 50.0;
 
 class BasicCar
 {
