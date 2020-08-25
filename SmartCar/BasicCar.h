@@ -14,7 +14,7 @@
 #include "DiMNGR.h"
 
 static const float MIN_REQUIRED_DIST_FOR_GO = 12.0;
-static const float MIN_REQUIRED_DIST_FOR_TURN = 17.0;
+static const float MIN_REQUIRED_DIST_FOR_TURN = 10.0;
 static const float DISTANCE_CLOSE = 30.0;
 static const float DISTANCE_MIDDLE = 60.0;
 static const float DISTANCE_FAR = 80.0;
