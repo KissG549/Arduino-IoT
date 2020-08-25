@@ -30,19 +30,26 @@ void BasicCar::move()
 #ifdef DEBUG_CAR
      Serial.print("Distance: ");
      Serial.println(distance);
+     Serial.print("canMove? ");
+     Serial.println(canMove(distance));
+     Serial.print("!Motors running? ");
+     Serial.println(!mMotorsRunning);     
 #endif
       
      adaptSpeedByDistance(distance);
 
-     if( canMove(distance) && !mMotorsRunning )
+     if( canMove(distance) )
      {
+      if( !mMotorsRunning )
+      {
         moveForward(0);
+      }
      }
      else
      {
         obstackleAvoidance(distance);
      }
-      delay(10);
+      //delay(1000);
   } // END while
 }
 
@@ -186,8 +193,32 @@ bool BasicCar::canTurn(double pDistance)
 
 void BasicCar::obstackleAvoidance(double pDistance)
 {
+  /*
+   * Stop => check distance => make turn possible (move backward) => make forward move possible (turn) => return
+   * 
+  */
    if(mMotorsRunning)
    {
-    stop();
+      stop();
    }
+
+   moveBackward();
+
+   while( pDistance < MIN_REQUIRED_DIST_FOR_TURN )
+   {
+     pDistance = mDistanceMNGR->measureDistanceCm();
+
+     String output = String(static_cast<uint8_t>(pDistance));
+     mDisplay->clear();
+     mDisplay->print( output );
+#ifdef DEBUG_CAR
+     Serial.print("Distance: ");
+     Serial.println(pDistance);
+#endif
+     delay(50);
+   }
+
+   stop();
+
+   
 }
