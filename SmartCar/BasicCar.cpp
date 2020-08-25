@@ -217,8 +217,31 @@ void BasicCar::obstackleAvoidance(double pDistance)
 #endif
      delay(50);
    }
-
    stop();
 
+   static const uint8_t xValue     = 200; // base turn time in ms
+   static const uint8_t tBackward  = 200; // in ms
+   static const uint8_t maxTry     = 30; // to prevent infinite loop
+   uint8_t turnTime = 0;
+
+   static const double distanceTolerance = 1.0;
+   uint8_t turnCounter = 0;
+
+   while( !canMove(distance) )
+   {
+      if(turnCounter >= maxTry)
+      {
+        break;
+        }
+      turnTime += xValue;
+      if( turnCounter % 2 == 0)
+      {
+        turnRight();
+      }
+      else
+      {
+        turnLeft();  
+      }
+   }
    
 }
