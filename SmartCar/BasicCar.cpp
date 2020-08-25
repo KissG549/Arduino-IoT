@@ -34,14 +34,14 @@ void BasicCar::move()
       
      adaptSpeedByDistance(distance);
 
-      if( canMove(distance) && !mMotorsRunning )
-      {
-          moveForward(0);
-      }
-      else
-      {
+     if( canMove(distance) && !mMotorsRunning )
+     {
+        moveForward(0);
+     }
+     else
+     {
         obstackleAvoidance(distance);
-      }
+     }
       delay(10);
   } // END while
 }
