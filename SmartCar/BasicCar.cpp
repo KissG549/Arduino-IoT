@@ -20,6 +20,13 @@ void BasicCar::move()
   }
   delay(10000);
  */
+
+  for( uint8_t it = 0; it < 5; ++it )
+  {
+    mDistanceMNGR->measureDistanceCm();  
+    delay(50);
+  }
+  
   while(true)
   {
      double distance = mDistanceMNGR->measureDistanceCm();
@@ -42,12 +49,25 @@ void BasicCar::move()
      {
       if( !mMotorsRunning )
       {
-        moveForward(0);
+        moveForward();
+      }
+      else if(!mDistanceMNGR->isMoving(1.0))
+      {
+        moveBackward();
+        delay(200);
+        stop();
+        obstackleAvoidance(distance);
       }
      }
      else
      {
+#ifdef DEBUG_CAR
+     Serial.println("Start obstackle avoidance here>>>>");
+#endif
         obstackleAvoidance(distance);
+#ifdef DEBUG_CAR
+     Serial.println("<<<<END obstackle avoidance here");
+#endif
      }
       //delay(1000);
   } // END while
@@ -202,9 +222,11 @@ void BasicCar::obstackleAvoidance(double pDistance)
       stop();
    }
 
+   setMotorSpeed( 150 );
+   
    moveBackward();
 
-   while( pDistance < MIN_REQUIRED_DIST_FOR_TURN )
+   while( !canTurn(pDistance) )
    {
      pDistance = mDistanceMNGR->measureDistanceCm();
 
@@ -212,7 +234,7 @@ void BasicCar::obstackleAvoidance(double pDistance)
      mDisplay->clear();
      mDisplay->print( output );
 #ifdef DEBUG_CAR
-     Serial.print("Distance: ");
+     Serial.print("Moving backward - Distance: ");
      Serial.println(pDistance);
 #endif
      delay(50);
@@ -222,26 +244,85 @@ void BasicCar::obstackleAvoidance(double pDistance)
    static const uint8_t xValue     = 200; // base turn time in ms
    static const uint8_t tBackward  = 200; // in ms
    static const uint8_t maxTry     = 30; // to prevent infinite loop
-   uint8_t turnTime = 0;
+   uint16_t turnTime = 0;
 
    static const double distanceTolerance = 1.0;
    uint8_t turnCounter = 0;
 
-   while( !canMove(distance) )
+   pDistance = mDistanceMNGR->measureDistanceCm();
+
+   double minRequiredDistance = (pDistance > MIN_REQUIRED_DIST_FOR_GO_AFTER_OBSTACKLE) ? pDistance : MIN_REQUIRED_DIST_FOR_GO_AFTER_OBSTACKLE;
+
+#ifdef DEBUG_CAR
+     Serial.print("After backward - distance: ");
+     Serial.println(pDistance);
+     Serial.print("Min req dist: ");
+     Serial.println(minRequiredDistance);
+#endif
+
+   bool canWeGo = false;
+
+   while( pDistance <= minRequiredDistance )
    {
-      if(turnCounter >= maxTry)
+      pDistance = mDistanceMNGR->measureDistanceCm();
+     
+      String output = String(static_cast<uint8_t>(pDistance));
+      mDisplay->clear();
+      mDisplay->print( output );
+      
+#ifdef DEBUG_CAR
+      Serial.print("Distance: ");
+      Serial.println(pDistance);
+#endif
+      //uint8_t positions = buff.size() - 1;
+     
+    /*  if( buff.size() > 1 )
+      {
+        canWeGo = buff.at( positions ) >  minRequiredDistance && buff.at( positions - 1 ) >  minRequiredDistance;
+      }
+      else
+      {
+        pDistance = mDistanceMNGR->measureDistanceCm();
+        buff.add(pDistance);
+        continue;
+      }
+      */
+
+      if(turnCounter++ >= maxTry)
       {
         break;
-        }
+      }
       turnTime += xValue;
+      if( turnTime > 2500 )
+      {
+        return;  
+      }
+        
       if( turnCounter % 2 == 0)
       {
         turnRight();
+#ifdef DEBUG_CAR
+      Serial.print("->>>>>>>>>>> TurnRight: ");
+#endif
       }
       else
       {
         turnLeft();  
+#ifdef DEBUG_CAR
+      Serial.print("->>>>>>>>>>> TurnLeft ");
+#endif
       }
+#ifdef DEBUG_CAR
+      Serial.println(turnTime);
+#endif
+      delay(turnTime);
+      
+      stop();
+      // pDistance = mDistanceMNGR->measureDistanceCm();
+      
+     
+
+     // delay(500);
    }
    
 }

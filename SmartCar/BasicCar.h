@@ -12,10 +12,12 @@
 #include "Arduino.h"
 #include "BHCSR04.h"
 #include "DiMNGR.h"
+#include "Buffer.h"
 
-static const float MIN_REQUIRED_DIST_FOR_GO = 12.0;
-static const float MIN_REQUIRED_DIST_FOR_TURN = 10.0;
-static const float DISTANCE_CLOSE = 30.0;
+static const float MIN_REQUIRED_DIST_FOR_GO = 16.0;
+static const float MIN_REQUIRED_DIST_FOR_GO_AFTER_OBSTACKLE = MIN_REQUIRED_DIST_FOR_GO * 1.5;
+static const float MIN_REQUIRED_DIST_FOR_TURN = 20.0;
+static const float DISTANCE_CLOSE = 40.0;
 static const float DISTANCE_MIDDLE = 60.0;
 static const float DISTANCE_FAR = 80.0;
 
