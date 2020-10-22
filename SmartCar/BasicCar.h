@@ -6,6 +6,7 @@
 #define DEBUG_CAR 1
 #endif
 
+#include <ArduinoLog.h>
 #include <AFMotor.h>
 #include <SevenSegmentTM1637.h>
 #include <SevenSegmentExtended.h>
