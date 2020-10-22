@@ -4,7 +4,7 @@
 void BasicCar::move()
 {
 /*  
- *   Identify minimal speed to mooving
+ *   Identify minimal speed to moving
   uint8_t spd = 0;
   while(!mDistanceMNGR->isMoving(2.0))
   {
