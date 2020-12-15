@@ -2,15 +2,18 @@
 #define _DISPLAY_OBSERVER_H_
 #include "ISubject.h"
 #include "IObserver.h"
-#include "EnvironmentSubject.h"
 
 class DisplayObserver : public IObserver
 {
   public:
-    DisplayObserver(EnvironmentSubject& pSubject)
-      : mSubject(pSubject)
+    DisplayObserver(ISubject* pSubject)
+      : mSubject( pSubject )
     {
-      mSubject.Attach(this);
+        mSubject->attach(this);
+        static uint8_t id = 0;
+        mId = id++;
+        Serial.print("Observer id: " );
+        Serial.println( mId );
     }
     
     virtual ~DisplayObserver()
@@ -18,26 +21,25 @@ class DisplayObserver : public IObserver
         Serial.print("Good bye, I was the Observer\n");
     }
 
-    void Update(const String& pMessage) override
+    void update(const String& pMessage) override
     {
         mMessageFromSubject = pMessage;
+        Serial.print("Message arrived:  " ) ;
+        Serial.print(mId);
+        Serial.print(" : ");
+        Serial.println(pMessage);
     }
 
-    void RemoveMeFromTheList()
-    {
-      mSubject.Detach(this);
-      Serial.print("Observer removed from the list.\n");
-    }
-
-    void PrintInfo()
+    void printInfo()
     {
       Serial.print("Observer, a new message is available: ");
       Serial.println( mMessageFromSubject ); 
     }
     
   private:
-    EnvironmentSubject& mSubject;
+    ISubject* mSubject;
     String mMessageFromSubject;
+    uint8_t mId;
 };
 
 #endif
