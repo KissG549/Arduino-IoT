@@ -9,7 +9,7 @@ class IObserver {
   
   public:
     virtual ~IObserver(){};
-    virtual void Update(const String& pMessage) = 0;
+    virtual void update(const String& pMessage) = 0;
 };
 
 #endif
