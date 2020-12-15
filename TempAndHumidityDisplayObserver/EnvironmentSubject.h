@@ -2,44 +2,53 @@
 #define _ENVIRONMENT_SUBJECT_H_
 #include "ISubject.h"
 #include "IObserver.h"
+#include "LinkedList.h"
 
 class EnvironmentSubject : public ISubject {
    public:
     virtual ~EnvironmentSubject()
     {
-        Serial.print("Good bye, I was the Subject\n");
+        Serial.println("Good bye, I was the Subject.");
     }
 
     /**
-     *  Subscription management methods
+     *  Subscription management methods.
      */
-    void Attach(IObserver *observer) override 
+    void attach(IObserver *pObserver) override 
     {
-     
+      mObservers.insert(pObserver);
+      Serial.println("Observer attached.");
     }
-    
-    void Detach(IObserver *observer) override 
+
+    /**
+     *  Notify every observer and pass the mMessage parameter. 
+     */
+    void notify() override
     {
-     
-    }
-    
-    void Notify() override
-    {
+      Serial.println("Notify observers.");
+      for( uint8_t idx = 0; idx < mObservers.size(); ++idx )
+      {
+          IObserver *obs = mObservers.at(idx);
+          obs->update(mMessage);
+      }
     }
 
     /* @return Number of attached observers */
-    void Size()
+    uint8_t size()
     {
+      return mObservers.size();
     }
 
-    void BusinessLogic() 
+    /* @pMessage will be passed to the observers with their Update function. */
+    void createMessage(String pMessage)
     {
-      Notify();  
+      mMessage = pMessage;
+      notify();
     }
 
   private:
     String mMessage;
-    
+    LinkedList<IObserver *> mObservers; 
  };
 
 #endif
