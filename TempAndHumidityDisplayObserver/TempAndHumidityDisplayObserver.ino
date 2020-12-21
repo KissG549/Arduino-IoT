@@ -1,3 +1,8 @@
+/*
+ * Used libraries: https://github.com/mike-matera/ArduinoSTL
+ * 
+*/
+
 #include "DisplayObserver.h"
 #include "TM1637Observer.h"
 #include "DHT11Subject.h"
